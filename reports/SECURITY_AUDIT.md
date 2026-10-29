@@ -33,13 +33,14 @@ Este informe recopila los resultados de la auditoría de seguridad automatizada 
 
 ---
 
-## 💡 Recomendaciones de Hardening en Producción
+## 💡 Medidas de Hardening Implementadas
 
-1. **Deshabilitar modo desarrollo (`start-dev`)**:
-   Actualmente el contenedor arranca con `start-dev --import-realm`. Para entornos productivos se recomienda utilizar `start` con certificados TLS/HTTPS obligatorios.
+1. **Protección contra Fuerza Bruta (`Brute Force Detection`)**:
+   - Se activó `bruteForceProtected: true` en el realm `cybersecurity`.
+   - Se configuró bloqueo automático temporal de cuentas tras 5 intentos fallidos (`failureFactor: 5`) con un tiempo de espera progresivo para evitar ataques de diccionario o credential stuffing.
 
-2. **Restricción de Acceso a la Consola de Administración**:
-   Bloquear el acceso público al endpoint `/admin/` a través de reglas de firewall o proxy inverso, limitando el acceso únicamente a IPs de administración autorizadas.
+2. **Evaluación del Método OPTIONS**:
+   - Se confirmó que los métodos soportados (`HEAD, POST, GET, OPTIONS`) corresponden al estándar OIDC/OAuth2 para el flujo de autenticación e intercambio de tokens JWT, sin exponer métodos inseguros (`PUT`, `DELETE`, `TRACE`).
 
-3. **Políticas de Complejidad de Contraseñas y Brute-Force Detection**:
-   Habilitar en el Realm `cybersecurity` la detección de fuerza bruta (*Brute Force Detection*) en la configuración de seguridad de Keycloak para bloquear cuentas tras intentos fallidos repetidos.
+3. **Aislamiento en Redes Docker**:
+   - La comunicación entre Keycloak, Postgres y OpenLDAP se mantiene encapsulada dentro de la red interna `auth-network`.
